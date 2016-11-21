@@ -105,9 +105,14 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
      */
     public static final int STATE_HIDDEN = 5;
 
+    /**
+     * The bottom sheet is anchored.
+     */
+    public static final int STATE_ANCHORED = 6;
+
     /** @hide */
     @RestrictTo(GROUP_ID)
-    @IntDef({STATE_EXPANDED, STATE_COLLAPSED, STATE_DRAGGING, STATE_SETTLING, STATE_HIDDEN})
+    @IntDef({STATE_EXPANDED, STATE_COLLAPSED, STATE_DRAGGING, STATE_SETTLING, STATE_HIDDEN, STATE_ANCHORED})
     @Retention(RetentionPolicy.SOURCE)
     public @interface State {}
 
@@ -130,6 +135,8 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
     private boolean mPeekHeightAuto;
 
     private int mPeekHeightMin;
+
+    private int mAnchorOffset;
 
     int mMinOffset;
 
@@ -244,6 +251,8 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
             ViewCompat.offsetTopAndBottom(child, mMaxOffset);
         } else if (mState == STATE_DRAGGING || mState == STATE_SETTLING) {
             ViewCompat.offsetTopAndBottom(child, savedTop - child.getTop());
+        } else if (mState == STATE_ANCHORED) {
+            ViewCompat.offsetTopAndBottom(child, mAnchorOffset);
         }
         if (mViewDragHelper == null) {
             mViewDragHelper = ViewDragHelper.create(parent, mDragCallback);
@@ -389,8 +398,15 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
         int top;
         int targetState;
         if (mLastNestedScrollDy > 0) {
-            top = mMinOffset;
-            targetState = STATE_EXPANDED;
+            // scrolling up, i.e. expanding
+            int currentTop = child.getTop();
+            if (currentTop > mAnchorOffset) {
+                top = mAnchorOffset;
+                targetState = STATE_ANCHORED;
+            } else {
+                top = mMinOffset;
+                targetState = STATE_EXPANDED;
+            }
         } else if (mHideable && shouldHide(child, getYVelocity())) {
             top = mParentHeight;
             targetState = STATE_HIDDEN;
@@ -404,8 +420,15 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
                 targetState = STATE_COLLAPSED;
             }
         } else {
-            top = mMaxOffset;
-            targetState = STATE_COLLAPSED;
+            // scrolling down, i.e. collapsing
+            int currentTop = child.getTop();
+            if (currentTop < mAnchorOffset) {
+                top = mAnchorOffset;
+                targetState = STATE_ANCHORED;
+            } else {
+                top = mMaxOffset;
+                targetState = STATE_COLLAPSED;
+            }
         }
         if (mViewDragHelper.smoothSlideViewTo(child, child.getLeft(), top)) {
             setStateInternal(STATE_SETTLING);
@@ -670,8 +693,14 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
             int top;
             @AnchorBottomSheetBehavior.State int targetState;
             if (yvel < 0) { // Moving up
-                top = mMinOffset;
-                targetState = STATE_EXPANDED;
+                int currentTop = releasedChild.getTop();
+                if (currentTop > mAnchorOffset) {
+                    top = mAnchorOffset;
+                    targetState = STATE_ANCHORED;
+                } else {
+                    top = mMinOffset;
+                    targetState = STATE_EXPANDED;
+                }
             } else if (mHideable && shouldHide(releasedChild, yvel)) {
                 top = mParentHeight;
                 targetState = STATE_HIDDEN;
@@ -685,8 +714,14 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
                     targetState = STATE_COLLAPSED;
                 }
             } else {
-                top = mMaxOffset;
-                targetState = STATE_COLLAPSED;
+                int currentTop = releasedChild.getTop();
+                if (currentTop < mAnchorOffset) {
+                    top = mAnchorOffset;
+                    targetState = STATE_ANCHORED;
+                } else {
+                    top = mMaxOffset;
+                    targetState = STATE_COLLAPSED;
+                }
             }
             if (mViewDragHelper.settleCapturedViewAt(releasedChild.getLeft(), top)) {
                 setStateInternal(STATE_SETTLING);
