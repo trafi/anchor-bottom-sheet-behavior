@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.trafi.bottomcontainer;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -23,7 +24,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.RestrictTo;
 import android.support.annotation.VisibleForTesting;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.MathUtils;
 import android.support.v4.os.ParcelableCompat;
 import android.support.v4.os.ParcelableCompatCreatorCallbacks;
 import android.support.v4.view.AbsSavedState;
@@ -46,47 +46,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.ref.WeakReference;
 
 import static android.support.annotation.RestrictTo.Scope.GROUP_ID;
-
-package android.support.design.widget;
-
-import android.content.Context;
-import android.content.res.TypedArray;
-import android.os.Parcel;
-import android.os.Parcelable;
-import android.support.annotation.IntDef;
-import android.support.annotation.NonNull;
-import android.support.annotation.RestrictTo;
-import android.support.annotation.VisibleForTesting;
-import android.support.design.R;
-import android.support.v4.os.ParcelableCompat;
-import android.support.v4.os.ParcelableCompatCreatorCallbacks;
-import android.support.v4.view.AbsSavedState;
-import android.support.v4.view.MotionEventCompat;
-import android.support.v4.view.NestedScrollingChild;
-import android.support.v4.view.VelocityTrackerCompat;
-import android.support.v4.view.ViewCompat;
-import android.support.v4.widget.ViewDragHelper;
-import android.util.AttributeSet;
-import android.util.TypedValue;
-import android.view.MotionEvent;
-import android.view.VelocityTracker;
-import android.view.View;
-import android.view.ViewConfiguration;
-import android.view.ViewGroup;
-import android.view.ViewParent;
-
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.ref.WeakReference;
-
-import static android.support.annotation.RestrictTo.Scope.GROUP_ID;
-
 
 /**
  * An interaction behavior plugin for a child view of {@link CoordinatorLayout} to make it work as
  * a bottom sheet.
  */
-public class BottomSheetBehavior<V extends View> extends CoordinatorLayout.Behavior<V> {
+public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout.Behavior<V> {
 
     /**
      * Callback for monitoring events about bottom sheets.
@@ -101,7 +66,7 @@ public class BottomSheetBehavior<V extends View> extends CoordinatorLayout.Behav
          *                    {@link #STATE_SETTLING}, {@link #STATE_EXPANDED},
          *                    {@link #STATE_COLLAPSED}, or {@link #STATE_HIDDEN}.
          */
-        public abstract void onStateChanged(@NonNull View bottomSheet, @android.support.design.widget.BottomSheetBehavior.State int newState);
+        public abstract void onStateChanged(@NonNull View bottomSheet, @AnchorBottomSheetBehavior.State int newState);
 
         /**
          * Called when the bottom sheet is being dragged.
@@ -174,7 +139,7 @@ public class BottomSheetBehavior<V extends View> extends CoordinatorLayout.Behav
 
     private boolean mSkipCollapsed;
 
-    @android.support.design.widget.BottomSheetBehavior.State
+    @AnchorBottomSheetBehavior.State
     int mState = STATE_COLLAPSED;
 
     ViewDragHelper mViewDragHelper;
@@ -191,7 +156,7 @@ public class BottomSheetBehavior<V extends View> extends CoordinatorLayout.Behav
 
     WeakReference<View> mNestedScrollingChildRef;
 
-    private android.support.design.widget.BottomSheetBehavior.BottomSheetCallback mCallback;
+    private AnchorBottomSheetBehavior.BottomSheetCallback mCallback;
 
     private VelocityTracker mVelocityTracker;
 
@@ -204,7 +169,7 @@ public class BottomSheetBehavior<V extends View> extends CoordinatorLayout.Behav
     /**
      * Default constructor for instantiating BottomSheetBehaviors.
      */
-    public BottomSheetBehavior() {
+    public AnchorBottomSheetBehavior() {
     }
 
     /**
@@ -213,7 +178,7 @@ public class BottomSheetBehavior<V extends View> extends CoordinatorLayout.Behav
      * @param context The {@link Context}.
      * @param attrs   The {@link AttributeSet}.
      */
-    public BottomSheetBehavior(Context context, AttributeSet attrs) {
+    public AnchorBottomSheetBehavior(Context context, AttributeSet attrs) {
         super(context, attrs);
         TypedArray a = context.obtainStyledAttributes(attrs,
                 android.support.design.R.styleable.BottomSheetBehavior_Layout);
@@ -234,12 +199,12 @@ public class BottomSheetBehavior<V extends View> extends CoordinatorLayout.Behav
 
     @Override
     public Parcelable onSaveInstanceState(CoordinatorLayout parent, V child) {
-        return new android.support.design.widget.BottomSheetBehavior.SavedState(super.onSaveInstanceState(parent, child), mState);
+        return new SavedState(super.onSaveInstanceState(parent, child), mState);
     }
 
     @Override
     public void onRestoreInstanceState(CoordinatorLayout parent, V child, Parcelable state) {
-        android.support.design.widget.BottomSheetBehavior.SavedState ss = (android.support.design.widget.BottomSheetBehavior.SavedState) state;
+        SavedState ss = (SavedState) state;
         super.onRestoreInstanceState(parent, child, ss.getSuperState());
         // Intermediate states are restored as collapsed state
         if (ss.state == STATE_DRAGGING || ss.state == STATE_SETTLING) {
@@ -444,7 +409,7 @@ public class BottomSheetBehavior<V extends View> extends CoordinatorLayout.Behav
         }
         if (mViewDragHelper.smoothSlideViewTo(child, child.getLeft(), top)) {
             setStateInternal(STATE_SETTLING);
-            ViewCompat.postOnAnimation(child, new android.support.design.widget.BottomSheetBehavior.SettleRunnable(child, targetState));
+            ViewCompat.postOnAnimation(child, new SettleRunnable(child, targetState));
         } else {
             setStateInternal(targetState);
         }
@@ -547,7 +512,7 @@ public class BottomSheetBehavior<V extends View> extends CoordinatorLayout.Behav
      *
      * @param callback The callback to notify when bottom sheet events occur.
      */
-    public void setBottomSheetCallback(android.support.design.widget.BottomSheetBehavior.BottomSheetCallback callback) {
+    public void setBottomSheetCallback(AnchorBottomSheetBehavior.BottomSheetCallback callback) {
         mCallback = callback;
     }
 
@@ -558,7 +523,7 @@ public class BottomSheetBehavior<V extends View> extends CoordinatorLayout.Behav
      * @param state One of {@link #STATE_COLLAPSED}, {@link #STATE_EXPANDED}, or
      *              {@link #STATE_HIDDEN}.
      */
-    public final void setState(final @android.support.design.widget.BottomSheetBehavior.State int state) {
+    public final void setState(final @AnchorBottomSheetBehavior.State int state) {
         if (state == mState) {
             return;
         }
@@ -594,12 +559,12 @@ public class BottomSheetBehavior<V extends View> extends CoordinatorLayout.Behav
      * @return One of {@link #STATE_EXPANDED}, {@link #STATE_COLLAPSED}, {@link #STATE_DRAGGING},
      * and {@link #STATE_SETTLING}.
      */
-    @android.support.design.widget.BottomSheetBehavior.State
+    @AnchorBottomSheetBehavior.State
     public final int getState() {
         return mState;
     }
 
-    void setStateInternal(@android.support.design.widget.BottomSheetBehavior.State int state) {
+    void setStateInternal(@AnchorBottomSheetBehavior.State int state) {
         if (mState == state) {
             return;
         }
@@ -664,7 +629,7 @@ public class BottomSheetBehavior<V extends View> extends CoordinatorLayout.Behav
         }
         setStateInternal(STATE_SETTLING);
         if (mViewDragHelper.smoothSlideViewTo(child, child.getLeft(), top)) {
-            ViewCompat.postOnAnimation(child, new android.support.design.widget.BottomSheetBehavior.SettleRunnable(child, state));
+            ViewCompat.postOnAnimation(child, new SettleRunnable(child, state));
         }
     }
 
@@ -703,7 +668,7 @@ public class BottomSheetBehavior<V extends View> extends CoordinatorLayout.Behav
         @Override
         public void onViewReleased(View releasedChild, float xvel, float yvel) {
             int top;
-            @android.support.design.widget.BottomSheetBehavior.State int targetState;
+            @AnchorBottomSheetBehavior.State int targetState;
             if (yvel < 0) { // Moving up
                 top = mMinOffset;
                 targetState = STATE_EXPANDED;
@@ -726,7 +691,7 @@ public class BottomSheetBehavior<V extends View> extends CoordinatorLayout.Behav
             if (mViewDragHelper.settleCapturedViewAt(releasedChild.getLeft(), top)) {
                 setStateInternal(STATE_SETTLING);
                 ViewCompat.postOnAnimation(releasedChild,
-                        new android.support.design.widget.BottomSheetBehavior.SettleRunnable(releasedChild, targetState));
+                        new SettleRunnable(releasedChild, targetState));
             } else {
                 setStateInternal(targetState);
             }
@@ -734,7 +699,11 @@ public class BottomSheetBehavior<V extends View> extends CoordinatorLayout.Behav
 
         @Override
         public int clampViewPositionVertical(View child, int top, int dy) {
-            return MathUtils.constrain(top, mMinOffset, mHideable ? mParentHeight : mMaxOffset);
+            return constrain(top, mMinOffset, mHideable ? mParentHeight : mMaxOffset);
+        }
+
+        private int constrain(int amount, int low, int high) {
+            return amount < low ? low : (amount > high ? high : amount);
         }
 
         @Override
@@ -774,10 +743,10 @@ public class BottomSheetBehavior<V extends View> extends CoordinatorLayout.Behav
 
         private final View mView;
 
-        @android.support.design.widget.BottomSheetBehavior.State
+        @AnchorBottomSheetBehavior.State
         private final int mTargetState;
 
-        SettleRunnable(View view, @android.support.design.widget.BottomSheetBehavior.State int targetState) {
+        SettleRunnable(View view, @AnchorBottomSheetBehavior.State int targetState) {
             mView = view;
             mTargetState = targetState;
         }
@@ -793,7 +762,7 @@ public class BottomSheetBehavior<V extends View> extends CoordinatorLayout.Behav
     }
 
     protected static class SavedState extends AbsSavedState {
-        @android.support.design.widget.BottomSheetBehavior.State
+        @AnchorBottomSheetBehavior.State
         final int state;
 
         public SavedState(Parcel source) {
@@ -806,7 +775,7 @@ public class BottomSheetBehavior<V extends View> extends CoordinatorLayout.Behav
             state = source.readInt();
         }
 
-        public SavedState(Parcelable superState, @android.support.design.widget.BottomSheetBehavior.State int state) {
+        public SavedState(Parcelable superState, @AnchorBottomSheetBehavior.State int state) {
             super(superState);
             this.state = state;
         }
@@ -817,39 +786,39 @@ public class BottomSheetBehavior<V extends View> extends CoordinatorLayout.Behav
             out.writeInt(state);
         }
 
-        public static final Creator<android.support.design.widget.BottomSheetBehavior.SavedState> CREATOR = ParcelableCompat.newCreator(
-                new ParcelableCompatCreatorCallbacks<android.support.design.widget.BottomSheetBehavior.SavedState>() {
+        public static final Creator<SavedState> CREATOR = ParcelableCompat.newCreator(
+                new ParcelableCompatCreatorCallbacks<SavedState>() {
                     @Override
-                    public android.support.design.widget.BottomSheetBehavior.SavedState createFromParcel(Parcel in, ClassLoader loader) {
-                        return new android.support.design.widget.BottomSheetBehavior.SavedState(in, loader);
+                    public SavedState createFromParcel(Parcel in, ClassLoader loader) {
+                        return new SavedState(in, loader);
                     }
 
                     @Override
-                    public android.support.design.widget.BottomSheetBehavior.SavedState[] newArray(int size) {
-                        return new android.support.design.widget.BottomSheetBehavior.SavedState[size];
+                    public SavedState[] newArray(int size) {
+                        return new SavedState[size];
                     }
                 });
     }
 
     /**
-     * A utility function to get the {@link android.support.design.widget.BottomSheetBehavior} associated with the {@code view}.
+     * A utility function to get the {@link AnchorBottomSheetBehavior} associated with the {@code view}.
      *
-     * @param view The {@link View} with {@link android.support.design.widget.BottomSheetBehavior}.
-     * @return The {@link android.support.design.widget.BottomSheetBehavior} associated with the {@code view}.
+     * @param view The {@link View} with {@link AnchorBottomSheetBehavior}.
+     * @return The {@link AnchorBottomSheetBehavior} associated with the {@code view}.
      */
     @SuppressWarnings("unchecked")
-    public static <V extends View> android.support.design.widget.BottomSheetBehavior<V> from(V view) {
+    public static <V extends View> AnchorBottomSheetBehavior<V> from(V view) {
         ViewGroup.LayoutParams params = view.getLayoutParams();
         if (!(params instanceof CoordinatorLayout.LayoutParams)) {
             throw new IllegalArgumentException("The view is not a child of CoordinatorLayout");
         }
         CoordinatorLayout.Behavior behavior = ((CoordinatorLayout.LayoutParams) params)
                 .getBehavior();
-        if (!(behavior instanceof android.support.design.widget.BottomSheetBehavior)) {
+        if (!(behavior instanceof AnchorBottomSheetBehavior)) {
             throw new IllegalArgumentException(
                     "The view is not associated with BottomSheetBehavior");
         }
-        return (android.support.design.widget.BottomSheetBehavior<V>) behavior;
+        return (AnchorBottomSheetBehavior<V>) behavior;
     }
 
 }
