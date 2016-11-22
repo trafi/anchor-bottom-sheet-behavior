@@ -1,4 +1,4 @@
-package com.trafi.anchorbottomsheetbehavior;
+package com.trafi.anchorbottomsheetbehavior.sample;
 
 import android.graphics.Color;
 import android.os.Bundle;
