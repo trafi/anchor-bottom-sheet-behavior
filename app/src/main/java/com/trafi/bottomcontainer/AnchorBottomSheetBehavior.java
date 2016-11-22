@@ -113,15 +113,18 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
      */
     public static final int STATE_ANCHORED = 6;
 
-    /** @hide */
+    /**
+     * @hide
+     */
     @RestrictTo(GROUP_ID)
     @IntDef({STATE_EXPANDED, STATE_COLLAPSED, STATE_DRAGGING, STATE_SETTLING, STATE_HIDDEN, STATE_ANCHORED})
     @Retention(RetentionPolicy.SOURCE)
-    public @interface State {}
+    public @interface State {
+    }
 
     /**
      * Peek at the 16:9 ratio keyline of its parent.
-     *
+     * <p>
      * <p>This can be used as a parameter for {@link #setPeekHeight(int)}.
      * {@link #getPeekHeight()} will return this when the value is set.</p>
      */
@@ -491,7 +494,7 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
      * Gets the height of the bottom sheet when it is collapsed.
      *
      * @return The height of the collapsed bottom sheet in pixels, or {@link #PEEK_HEIGHT_AUTO}
-     *         if the sheet is configured to peek automatically at 16:9 ratio keyline
+     * if the sheet is configured to peek automatically at 16:9 ratio keyline
      * @attr ref android.support.design.R.styleable#BottomSheetBehavior_Layout_behavior_peekHeight
      */
     public final int getPeekHeight() {
