@@ -14,7 +14,8 @@
         android:layout_height="wrap_content"
         android:background="@android:color/white"
         android:orientation="vertical"
-        app:behavior_peekHeight="200dp"
+        app:behavior_anchorOffset="224dp"
+        app:behavior_peekHeight="192dp"
         app:layout_behavior="com.trafi.bottomcontainer.AnchorBottomSheetBehavior">
 
         <TextView

@@ -41,6 +41,8 @@ import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 
+import com.trafi.anchorbottomsheetbehavior.R;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.ref.WeakReference;
@@ -200,6 +202,11 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
         setSkipCollapsed(a.getBoolean(android.support.design.R.styleable.BottomSheetBehavior_Layout_behavior_skipCollapsed,
                 false));
         a.recycle();
+
+        a = context.obtainStyledAttributes(attrs, R.styleable.AnchorBottomSheetBehavior_Layout);
+        mAnchorOffset = (int) a.getDimension(R.styleable.AnchorBottomSheetBehavior_Layout_behavior_anchorOffset, 0);
+        a.recycle();
+
         ViewConfiguration configuration = ViewConfiguration.get(context);
         mMaximumVelocity = configuration.getScaledMaximumFlingVelocity();
     }
