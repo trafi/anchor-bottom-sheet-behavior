@@ -180,13 +180,13 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
     boolean mTouchingScrollingChild;
 
     /**
-     * Default constructor for instantiating BottomSheetBehaviors.
+     * Default constructor for instantiating AnchorBottomSheetBehaviors.
      */
     public AnchorBottomSheetBehavior() {
     }
 
     /**
-     * Default constructor for inflating BottomSheetBehaviors from layout.
+     * Default constructor for inflating AnchorBottomSheetBehaviors from layout.
      *
      * @param context The {@link Context}.
      * @param attrs   The {@link AttributeSet}.
@@ -876,7 +876,7 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
                 .getBehavior();
         if (!(behavior instanceof AnchorBottomSheetBehavior)) {
             throw new IllegalArgumentException(
-                    "The view is not associated with BottomSheetBehavior");
+                    "The view is not associated with AnchorBottomSheetBehavior");
         }
         return (AnchorBottomSheetBehavior<V>) behavior;
     }
