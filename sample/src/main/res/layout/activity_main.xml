@@ -6,20 +6,59 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?colorAccent"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    tools:ignore="HardcodedText,UnusedAttribute">
+
+    <View
+        android:id="@+id/anchored_keyline"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_gravity="top"
+        android:layout_marginTop="@dimen/anchor_offset"
+        android:background="@android:color/white" />
+
+    <View
+        android:id="@+id/collapsed_keyline"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="@dimen/peek_height"
+        android:background="@android:color/white" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="@dimen/peek_height"
+        android:text="Collapsed"
+        android:textAllCaps="true" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:layout_marginTop="@dimen/anchor_offset"
+        android:text="Anchored"
+        android:textAllCaps="true" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:text="Expanded"
+        android:textAllCaps="true" />
 
     <LinearLayout
         android:id="@+id/bottom_sheet"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/white"
+        android:background="#EEE"
         android:orientation="vertical"
-        app:behavior_anchorOffset="224dp"
-        app:behavior_peekHeight="192dp"
+        app:behavior_anchorOffset="@dimen/anchor_offset"
+        app:behavior_peekHeight="@dimen/peek_height"
         app:layout_behavior="com.trafi.anchorbottomsheetbehavior.AnchorBottomSheetBehavior">
 
         <TextView
-            android:id="@+id/mock_search_view"
             style="@style/TextAppearance.AppCompat.Title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -29,13 +68,13 @@
             android:background="?colorPrimary"
             android:gravity="center_vertical"
             android:padding="16dp"
-            android:text="@string/app_name"
-            android:textColor="@android:color/primary_text_dark" />
+            android:text="@string/app_name" />
 
         <android.support.v4.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scrollbars="vertical">
+            android:scrollbars="vertical"
+            android:theme="@style/Theme.AppCompat.Light">
 
             <LinearLayout
                 android:layout_width="match_parent"
