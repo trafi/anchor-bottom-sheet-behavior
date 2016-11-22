@@ -66,7 +66,8 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
          * @param bottomSheet The bottom sheet view.
          * @param newState    The new state. This will be one of {@link #STATE_DRAGGING},
          *                    {@link #STATE_SETTLING}, {@link #STATE_EXPANDED},
-         *                    {@link #STATE_COLLAPSED}, or {@link #STATE_HIDDEN}.
+         *                    {@link #STATE_COLLAPSED}, {@link #STATE_ANCHORED} or
+         *                    {@link #STATE_HIDDEN}.
          */
         public abstract void onStateChanged(@NonNull View bottomSheet, @AnchorBottomSheetBehavior.State int newState);
 
@@ -552,8 +553,8 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
      * Sets the state of the bottom sheet. The bottom sheet will transition to that state with
      * animation.
      *
-     * @param state One of {@link #STATE_COLLAPSED}, {@link #STATE_EXPANDED}, or
-     *              {@link #STATE_HIDDEN}.
+     * @param state One of {@link #STATE_COLLAPSED}, {@link #STATE_EXPANDED},
+     *              {@link #STATE_ANCHORED} or{@link #STATE_HIDDEN}.
      */
     public final void setState(final @AnchorBottomSheetBehavior.State int state) {
         if (state == mState) {
@@ -561,7 +562,7 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
         }
         if (mViewRef == null) {
             // The view is not laid out yet; modify mState and let onLayoutChild handle it later
-            if (state == STATE_COLLAPSED || state == STATE_EXPANDED ||
+            if (state == STATE_COLLAPSED || state == STATE_EXPANDED || state == STATE_ANCHORED ||
                     (mHideable && state == STATE_HIDDEN)) {
                 mState = state;
             }
@@ -588,8 +589,8 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
     /**
      * Gets the current state of the bottom sheet.
      *
-     * @return One of {@link #STATE_EXPANDED}, {@link #STATE_COLLAPSED}, {@link #STATE_DRAGGING},
-     * and {@link #STATE_SETTLING}.
+     * @return One of {@link #STATE_EXPANDED}, {@link #STATE_ANCHORED}, {@link #STATE_COLLAPSED},
+     * {@link #STATE_DRAGGING}, and {@link #STATE_SETTLING}.
      */
     @AnchorBottomSheetBehavior.State
     public final int getState() {
@@ -672,6 +673,8 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
             top = mMaxOffset;
         } else if (state == STATE_EXPANDED) {
             top = mMinOffset;
+        } else if (state == STATE_ANCHORED) {
+            top = mAnchorOffset;
         } else if (mHideable && state == STATE_HIDDEN) {
             top = mParentHeight;
         } else {
