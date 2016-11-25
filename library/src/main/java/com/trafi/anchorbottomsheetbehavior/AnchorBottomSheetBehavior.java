@@ -44,6 +44,8 @@ import android.view.ViewParent;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
 
 import static android.support.annotation.RestrictTo.Scope.GROUP_ID;
 
@@ -171,7 +173,7 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
 
     WeakReference<View> mNestedScrollingChildRef;
 
-    private AnchorBottomSheetBehavior.BottomSheetCallback mCallback;
+    private List<BottomSheetCallback> mCallbacks = new ArrayList<>(2);
 
     private VelocityTracker mVelocityTracker;
 
@@ -542,12 +544,16 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
     }
 
     /**
-     * Sets a callback to be notified of bottom sheet events.
+     * Registers a callback to be notified of bottom sheet events.
      *
      * @param callback The callback to notify when bottom sheet events occur.
      */
-    public void setBottomSheetCallback(AnchorBottomSheetBehavior.BottomSheetCallback callback) {
-        mCallback = callback;
+    public void addBottomSheetCallback(AnchorBottomSheetBehavior.BottomSheetCallback callback) {
+        mCallbacks.add(callback);
+    }
+
+    public void removeBottomSheetCallback(AnchorBottomSheetBehavior.BottomSheetCallback callback) {
+        mCallbacks.remove(callback);
     }
 
     /**
@@ -604,8 +610,10 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
         }
         mState = state;
         View bottomSheet = mViewRef.get();
-        if (bottomSheet != null && mCallback != null) {
-            mCallback.onStateChanged(bottomSheet, state);
+        if (bottomSheet != null) {
+            for (int i = 0; i < mCallbacks.size(); i++) {
+                mCallbacks.get(i).onStateChanged(bottomSheet, state);
+            }
         }
     }
 
@@ -787,13 +795,16 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
 
     void dispatchOnSlide(int top) {
         View bottomSheet = mViewRef.get();
-        if (bottomSheet != null && mCallback != null) {
+        if (bottomSheet != null) {
+            float slideOffset;
             if (top > mMaxOffset) {
-                mCallback.onSlide(bottomSheet, (float) (mMaxOffset - top) /
-                        (mParentHeight - mMaxOffset));
+                slideOffset = (float) (mMaxOffset - top) / (mParentHeight - mMaxOffset);
             } else {
-                mCallback.onSlide(bottomSheet,
-                        (float) (mMaxOffset - top) / ((mMaxOffset - mMinOffset)));
+                slideOffset = (float) (mMaxOffset - top) / (mMaxOffset - mMinOffset);
+            }
+
+            for (int i = 0; i < mCallbacks.size(); i++) {
+                mCallbacks.get(i).onSlide(bottomSheet, slideOffset);
             }
         }
     }
