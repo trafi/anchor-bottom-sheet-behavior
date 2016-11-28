@@ -56,6 +56,7 @@
         android:orientation="vertical"
         app:behavior_anchorOffset="@dimen/anchor_offset"
         app:behavior_peekHeight="@dimen/peek_height"
+        app:behavior_defaultState="collapsed"
         app:layout_behavior="com.trafi.anchorbottomsheetbehavior.AnchorBottomSheetBehavior">
 
         <TextView

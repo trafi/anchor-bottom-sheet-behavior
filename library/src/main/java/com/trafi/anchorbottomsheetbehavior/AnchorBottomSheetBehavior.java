@@ -213,6 +213,8 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
 
         a = context.obtainStyledAttributes(attrs, R.styleable.AnchorBottomSheetBehavior_Layout);
         mAnchorOffset = (int) a.getDimension(R.styleable.AnchorBottomSheetBehavior_Layout_behavior_anchorOffset, 0);
+        //noinspection WrongConstant
+        mState = a.getInt(R.styleable.AnchorBottomSheetBehavior_Layout_behavior_defaultState, mState);
         a.recycle();
 
         ViewConfiguration configuration = ViewConfiguration.get(context);
