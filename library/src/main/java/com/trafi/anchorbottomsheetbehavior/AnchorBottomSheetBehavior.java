@@ -502,6 +502,33 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
     }
 
     /**
+     * Sets the offset of the bottom sheet when it is anchored.
+     *
+     * @param anchorOffset The offset of the anchored bottom sheet in pixels.
+     * @attr ref com.trafi.anchorbottomsheetbehavior.R.styleable#AnchorBottomSheetBehavior_Layout_behavior_anchorOffset
+     */
+    public final void setAnchorOffset(int anchorOffset) {
+        if (mAnchorOffset != anchorOffset) {
+            mAnchorOffset = anchorOffset;
+
+            if (mState == STATE_ANCHORED) {
+                setStateInternal(STATE_SETTLING);
+                setState(STATE_ANCHORED);
+            }
+        }
+    }
+
+    /**
+     * Gets the offset of the bottom sheet when it is anchored.
+     *
+     * @return The offset of the anchored bottom sheet in pixels.
+     * @attr ref com.trafi.anchorbottomsheetbehavior.R.styleable#AnchorBottomSheetBehavior_Layout_behavior_anchorOffset
+     */
+    public final int getAnchorOffset() {
+        return mAnchorOffset;
+    }
+
+    /**
      * Sets whether this bottom sheet can hide when it is swiped down.
      *
      * @param hideable {@code true} to make this bottom sheet hideable.
