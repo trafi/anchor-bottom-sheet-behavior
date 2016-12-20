@@ -69,7 +69,7 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
          *                    {@link #STATE_COLLAPSED}, {@link #STATE_ANCHORED} or
          *                    {@link #STATE_HIDDEN}.
          */
-        public abstract void onStateChanged(@NonNull View bottomSheet, @AnchorBottomSheetBehavior.State int newState);
+        public abstract void onStateChanged(@NonNull View bottomSheet, @State int newState);
 
         /**
          * Called when the bottom sheet is being dragged.
@@ -81,6 +81,20 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
          *                    between hidden and collapsed states.
          */
         public abstract void onSlide(@NonNull View bottomSheet, float slideOffset);
+    }
+
+    /**
+     * Stub/no-op implementations of all methods of {@link BottomSheetCallback}.
+     * Override this if you only care about a few of the available callback methods.
+     */
+    public abstract static class SimpleBottomSheetCallback extends BottomSheetCallback {
+        @Override
+        public void onStateChanged(@NonNull View bottomSheet, @State int newState) {
+        }
+
+        @Override
+        public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+        }
     }
 
     /**
