@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
+import com.trafi.anchorbottomsheetbehavior.AnchorBottomSheetBehavior;
+
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
@@ -29,5 +31,9 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.button_the_first).setOnClickListener(onClickChangeBackgroundColor);
         findViewById(R.id.button_the_second).setOnClickListener(onClickChangeBackgroundColor);
         findViewById(R.id.button_the_third).setOnClickListener(onClickChangeBackgroundColor);
+
+        AnchorBottomSheetBehavior behavior= AnchorBottomSheetBehavior.from(findViewById(R.id.bottom_sheet));
+        behavior.setState(AnchorBottomSheetBehavior.STATE_EXPANDED);
+        behavior.setAllowUserDragging(false);
     }
 }

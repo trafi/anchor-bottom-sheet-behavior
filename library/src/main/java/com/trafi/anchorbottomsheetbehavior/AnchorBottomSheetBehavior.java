@@ -162,6 +162,8 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
 
     private int mAnchorOffset;
 
+    private boolean mAllowUserDragging = true;
+
     int mMinOffset;
 
     int mMaxOffset;
@@ -295,7 +297,7 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
 
     @Override
     public boolean onInterceptTouchEvent(CoordinatorLayout parent, V child, MotionEvent event) {
-        if (!child.isShown()) {
+        if (!child.isShown() || !mAllowUserDragging) {
             mIgnoreEvents = true;
             return false;
         }
@@ -346,7 +348,7 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
 
     @Override
     public boolean onTouchEvent(CoordinatorLayout parent, V child, MotionEvent event) {
-        if (!child.isShown()) {
+        if (!child.isShown() || !mAllowUserDragging) {
             return false;
         }
         int action = MotionEventCompat.getActionMasked(event);
@@ -375,6 +377,9 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
     @Override
     public boolean onStartNestedScroll(CoordinatorLayout coordinatorLayout, V child,
                                        View directTargetChild, View target, int nestedScrollAxes) {
+        if (!mAllowUserDragging) {
+            return false;
+        }
         mLastNestedScrollDy = 0;
         mNestedScrolled = false;
         return (nestedScrollAxes & ViewCompat.SCROLL_AXIS_VERTICAL) != 0;
@@ -383,6 +388,9 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
     @Override
     public void onNestedPreScroll(CoordinatorLayout coordinatorLayout, V child, View target, int dx,
                                   int dy, int[] consumed) {
+        if (!mAllowUserDragging) {
+            return;
+        }
         View scrollingChild = mNestedScrollingChildRef.get();
         if (target != scrollingChild) {
             return;
@@ -419,6 +427,9 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
 
     @Override
     public void onStopNestedScroll(CoordinatorLayout coordinatorLayout, V child, View target) {
+        if (!mAllowUserDragging) {
+            return;
+        }
         if (child.getTop() == mMinOffset) {
             setStateInternal(STATE_EXPANDED);
             return;
@@ -471,6 +482,9 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
     @Override
     public boolean onNestedPreFling(CoordinatorLayout coordinatorLayout, V child, View target,
                                     float velocityX, float velocityY) {
+        if (!mAllowUserDragging) {
+            return false;
+        }
         return target == mNestedScrollingChildRef.get() &&
                 (mState != STATE_EXPANDED ||
                         super.onNestedPreFling(coordinatorLayout, child, target,
@@ -597,6 +611,14 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
 
     public void removeBottomSheetCallback(AnchorBottomSheetBehavior.BottomSheetCallback callback) {
         mCallbacks.remove(callback);
+    }
+
+    public void setAllowUserDragging(boolean allowUserDragging) {
+        mAllowUserDragging = allowUserDragging;
+    }
+
+    public boolean getAllowUserDragging() {
+        return mAllowUserDragging;
     }
 
     /**
