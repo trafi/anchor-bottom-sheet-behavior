@@ -31,9 +31,5 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.button_the_first).setOnClickListener(onClickChangeBackgroundColor);
         findViewById(R.id.button_the_second).setOnClickListener(onClickChangeBackgroundColor);
         findViewById(R.id.button_the_third).setOnClickListener(onClickChangeBackgroundColor);
-
-        AnchorBottomSheetBehavior behavior= AnchorBottomSheetBehavior.from(findViewById(R.id.bottom_sheet));
-        behavior.setState(AnchorBottomSheetBehavior.STATE_EXPANDED);
-        behavior.setAllowUserDragging(false);
     }
 }
