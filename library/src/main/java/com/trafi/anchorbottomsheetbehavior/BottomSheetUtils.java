@@ -9,33 +9,26 @@ import android.view.ViewParent;
 public class BottomSheetUtils {
 
     public static void setupViewPager(ViewPager viewPager) {
-        final View bottomSheetParent = findBottomSheetParent(viewPager);
+        final View bottomSheetParent = findBottomSheetView(viewPager);
         if (bottomSheetParent != null) {
-            viewPager.addOnPageChangeListener(new BottomSheetViewPagerListener(viewPager, bottomSheetParent));
+            viewPager.addOnPageChangeListener(new BottomSheetViewPagerListener(bottomSheetParent));
         }
     }
 
     private static class BottomSheetViewPagerListener extends ViewPager.SimpleOnPageChangeListener {
-        private final ViewPager viewPager;
         private final AnchorBottomSheetBehavior<View> behavior;
 
-        public BottomSheetViewPagerListener(ViewPager viewPager, View bottomSheetParent) {
-            this.viewPager = viewPager;
+        public BottomSheetViewPagerListener(View bottomSheetParent) {
             this.behavior = AnchorBottomSheetBehavior.from(bottomSheetParent);
         }
 
         @Override
         public void onPageSelected(int position) {
-            viewPager.post(new Runnable() {
-                @Override
-                public void run() {
-                    behavior.invalidateScrollingChild();
-                }
-            });
+            behavior.invalidateScrollingChild();
         }
     }
 
-    private static View findBottomSheetParent(final View view) {
+    private static View findBottomSheetView(final View view) {
         View current = view;
         while (current != null) {
             final ViewGroup.LayoutParams params = current.getLayoutParams();
