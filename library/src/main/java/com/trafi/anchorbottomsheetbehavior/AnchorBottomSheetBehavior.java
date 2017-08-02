@@ -31,6 +31,8 @@ import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.NestedScrollingChild;
 import android.support.v4.view.VelocityTrackerCompat;
 import android.support.v4.view.ViewCompat;
+import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPagerUtils;
 import android.support.v4.widget.ViewDragHelper;
 import android.util.AttributeSet;
 import android.util.TypedValue;
@@ -235,6 +237,11 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
 
         ViewConfiguration configuration = ViewConfiguration.get(context);
         mMaximumVelocity = configuration.getScaledMaximumFlingVelocity();
+    }
+
+    void invalidateScrollingChild() {
+        final View scrollingChild = findScrollingChild(mViewRef.get());
+        mNestedScrollingChildRef = new WeakReference<>(scrollingChild);
     }
 
     @Override
@@ -724,7 +731,14 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
         if (view instanceof NestedScrollingChild) {
             return view;
         }
-        if (view instanceof ViewGroup) {
+        if (view instanceof ViewPager) {
+            ViewPager viewPager = (ViewPager) view;
+            View currentViewPagerChild = ViewPagerUtils.getCurrentView(viewPager);
+            View scrollingChild = findScrollingChild(currentViewPagerChild);
+            if (scrollingChild != null) {
+                return scrollingChild;
+            }
+        } else if (view instanceof ViewGroup) {
             ViewGroup group = (ViewGroup) view;
             for (int i = 0, count = group.getChildCount(); i < count; i++) {
                 View scrollingChild = findScrollingChild(group.getChildAt(i));
