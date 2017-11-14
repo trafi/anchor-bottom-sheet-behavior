@@ -46,7 +46,7 @@ allprojects {
 // module build.gradle
 dependencies {
     // ..
-    implementation 'com.trafi:anchor-bottom-sheet-behavior:0.7-alpha'
+    implementation 'com.trafi:anchor-bottom-sheet-behavior:0.8-alpha'
 }
 ```
 
