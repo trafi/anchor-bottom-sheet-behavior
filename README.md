@@ -46,7 +46,7 @@ allprojects {
 // module build.gradle
 dependencies {
     // ..
-    implementation 'com.trafi:anchor-bottom-sheet-behavior:0.8-alpha'
+    implementation 'com.trafi:anchor-bottom-sheet-behavior:0.9-alpha'
 }
 ```
 
@@ -65,7 +65,7 @@ dependencies {
 ```
 
 ```kotlin
-val behavior = AnchorBottomSheetBehavior.from<View>(bottom_sheet)
+val behavior = AnchorBottomSheetBehavior.from(bottom_sheet)
 behavior.state = AnchorBottomSheetBehavior.STATE_EXPANDED
 behavior.allowUserDragging = false
 behavior.anchorOffset = 200
