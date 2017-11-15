@@ -1,3 +1,18 @@
+/*
+ * Copyright (C) 2016 Christian Langer
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.trafi.anchorbottomsheetbehavior;
 
 import android.support.design.widget.CoordinatorLayout;
@@ -8,31 +23,39 @@ import android.view.ViewParent;
 
 public class BottomSheetUtils {
 
-    public static void setupViewPager(ViewPager viewPager) {
-        final View bottomSheetParent = findBottomSheetView(viewPager);
-        if (bottomSheetParent != null) {
-            viewPager.addOnPageChangeListener(new BottomSheetViewPagerListener(bottomSheetParent));
+    public static void setupViewPager(ViewPager pager) {
+        final View bottomSheetView = findBottomSheetView(pager);
+        if (bottomSheetView != null) {
+            pager.addOnPageChangeListener(new BottomSheetViewPagerListener(pager, bottomSheetView));
         }
     }
 
     private static class BottomSheetViewPagerListener extends ViewPager.SimpleOnPageChangeListener {
-        private final AnchorBottomSheetBehavior<View> behavior;
+        private final View pager;
+        private final AnchorBottomSheetBehavior behavior;
 
-        public BottomSheetViewPagerListener(View bottomSheetParent) {
-            this.behavior = AnchorBottomSheetBehavior.from(bottomSheetParent);
+        private BottomSheetViewPagerListener(ViewPager pager, View bottomSheetView) {
+            this.pager = pager;
+            this.behavior = AnchorBottomSheetBehavior.from(bottomSheetView);
         }
 
         @Override
         public void onPageSelected(int position) {
-            behavior.invalidateScrollingChild();
+            pager.post(new Runnable() {
+                @Override
+                public void run() {
+                    behavior.invalidateScrollingChild();
+                }
+            });
         }
     }
 
-    private static View findBottomSheetView(final View view) {
-        View current = view;
+    private static View findBottomSheetView(View root) {
+        View current = root;
         while (current != null) {
             final ViewGroup.LayoutParams params = current.getLayoutParams();
-            if (params instanceof CoordinatorLayout.LayoutParams && ((CoordinatorLayout.LayoutParams) params).getBehavior() instanceof AnchorBottomSheetBehavior) {
+            if (params instanceof CoordinatorLayout.LayoutParams
+                    && ((CoordinatorLayout.LayoutParams) params).getBehavior() instanceof AnchorBottomSheetBehavior) {
                 return current;
             }
             final ViewParent parent = current.getParent();
