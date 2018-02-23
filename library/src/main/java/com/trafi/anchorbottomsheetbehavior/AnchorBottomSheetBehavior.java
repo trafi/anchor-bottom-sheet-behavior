@@ -181,8 +181,6 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
 
     private boolean mIgnoreEvents;
 
-    private int mLastNestedScrollDy;
-
     private boolean mNestedScrolled;
 
     int mParentHeight;
@@ -389,7 +387,6 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
         if (!mAllowUserDragging) {
             return false;
         }
-        mLastNestedScrollDy = 0;
         mNestedScrolled = false;
         return (nestedScrollAxes & ViewCompat.SCROLL_AXIS_VERTICAL) != 0;
     }
@@ -430,7 +427,6 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
             }
         }
         dispatchOnSlide(child.getTop());
-        mLastNestedScrollDy = dy;
         mNestedScrolled = true;
     }
 
