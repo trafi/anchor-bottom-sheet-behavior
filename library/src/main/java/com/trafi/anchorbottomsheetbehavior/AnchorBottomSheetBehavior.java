@@ -29,7 +29,6 @@ import android.support.v4.os.ParcelableCompatCreatorCallbacks;
 import android.support.v4.view.AbsSavedState;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.NestedScrollingChild;
-import android.support.v4.view.VelocityTrackerCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPagerUtils;
@@ -154,6 +153,8 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
 
     private static final float COLLAPSE_FRICTION = 0.2f;
 
+    private float mMinimumVelocity;
+
     private float mMaximumVelocity;
 
     private int mPeekHeight;
@@ -235,6 +236,7 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
 
         ViewConfiguration configuration = ViewConfiguration.get(context);
         mMaximumVelocity = configuration.getScaledMaximumFlingVelocity();
+        mMinimumVelocity = configuration.getScaledMinimumFlingVelocity();
     }
 
     void invalidateScrollingChild() {
