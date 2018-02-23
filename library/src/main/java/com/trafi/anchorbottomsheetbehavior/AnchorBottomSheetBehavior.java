@@ -678,7 +678,8 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
         int top;
         @AnchorBottomSheetBehavior.State int targetState;
 
-        if (yvel < 0) { // Moving up
+        if (yvel < 0 && Math.abs(yvel) > mMinimumVelocity) {
+            // scrolling up, i.e. expanding
             if (shouldExpand(child, yvel)) {
                 top = mMinOffset;
                 targetState = STATE_EXPANDED;
@@ -689,22 +690,34 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
         } else if (mHideable && shouldHide(child, yvel)) {
             top = mParentHeight;
             targetState = STATE_HIDDEN;
-        } else if (yvel == 0.f) {
-            int currentTop = child.getTop();
-            if (Math.abs(currentTop - mMinOffset) < Math.abs(currentTop - mMaxOffset)) {
-                top = mMinOffset;
-                targetState = STATE_EXPANDED;
-            } else {
-                top = mMaxOffset;
-                targetState = STATE_COLLAPSED;
-            }
-        } else {
+        } else if (yvel > 0 && Math.abs(yvel) > mMinimumVelocity) {
+            // scrolling down, i.e. collapsing
             if (shouldCollapse(child, yvel)) {
                 top = mMaxOffset;
                 targetState = STATE_COLLAPSED;
             } else {
                 top = mAnchorOffset;
                 targetState = STATE_ANCHORED;
+            }
+        } else {
+            // not scrolling much, i.e. stationary
+            int currentTop = child.getTop();
+            if (currentTop < mAnchorOffset) {
+                if (Math.abs(currentTop - mMinOffset) < Math.abs(currentTop - mAnchorOffset)) {
+                    top = mMinOffset;
+                    targetState = STATE_EXPANDED;
+                } else {
+                    top = mAnchorOffset;
+                    targetState = STATE_ANCHORED;
+                }
+            } else {
+                if (Math.abs(currentTop - mMaxOffset) < Math.abs(currentTop - mAnchorOffset)) {
+                    top = mMaxOffset;
+                    targetState = STATE_COLLAPSED;
+                } else {
+                    top = mAnchorOffset;
+                    targetState = STATE_ANCHORED;
+                }
             }
         }
 
