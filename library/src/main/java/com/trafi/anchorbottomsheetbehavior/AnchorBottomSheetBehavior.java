@@ -446,39 +446,16 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
         if (target != mNestedScrollingChildRef.get() || !mNestedScrolled) {
             return;
         }
-        int top;
-        int targetState;
-        if (mLastNestedScrollDy > 0) {
-            // scrolling up, i.e. expanding
-            if (shouldExpand(child, getYVelocity())) {
-                top = mMinOffset;
-                targetState = STATE_EXPANDED;
-            } else {
-                top = mAnchorOffset;
-                targetState = STATE_ANCHORED;
-            }
-        } else if (mHideable && shouldHide(child, getYVelocity())) {
-            top = mParentHeight;
-            targetState = STATE_HIDDEN;
-        } else if (mLastNestedScrollDy == 0) {
-            int currentTop = child.getTop();
-            if (Math.abs(currentTop - mMinOffset) < Math.abs(currentTop - mMaxOffset)) {
-                top = mMinOffset;
-                targetState = STATE_EXPANDED;
-            } else {
-                top = mMaxOffset;
-                targetState = STATE_COLLAPSED;
-            }
-        } else {
-            // scrolling down, i.e. collapsing
-            if (shouldCollapse(child, getYVelocity())) {
-                top = mMaxOffset;
-                targetState = STATE_COLLAPSED;
-            } else {
-                top = mAnchorOffset;
-                targetState = STATE_ANCHORED;
-            }
-        }
+
+        mVelocityTracker.computeCurrentVelocity(1000, mMaximumVelocity);
+        float xvel = mVelocityTracker.getXVelocity(mActivePointerId);
+        float yvel = mVelocityTracker.getYVelocity(mActivePointerId);
+
+        int[] out = new int[2];
+        calculateTopAndTargetState(child, xvel, yvel, out);
+        int top = out[0];
+        int targetState = out[1];
+
         if (mViewDragHelper.smoothSlideViewTo(child, child.getLeft(), top)) {
             setStateInternal(STATE_SETTLING);
             ViewCompat.postOnAnimation(child, new SettleRunnable(child, targetState));
@@ -699,6 +676,44 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
         }
     }
 
+    private void calculateTopAndTargetState(View child, float xvel, float yvel, int[] out) {
+        int top;
+        @AnchorBottomSheetBehavior.State int targetState;
+
+        if (yvel < 0) { // Moving up
+            if (shouldExpand(child, yvel)) {
+                top = mMinOffset;
+                targetState = STATE_EXPANDED;
+            } else {
+                top = mAnchorOffset;
+                targetState = STATE_ANCHORED;
+            }
+        } else if (mHideable && shouldHide(child, yvel)) {
+            top = mParentHeight;
+            targetState = STATE_HIDDEN;
+        } else if (yvel == 0.f) {
+            int currentTop = child.getTop();
+            if (Math.abs(currentTop - mMinOffset) < Math.abs(currentTop - mMaxOffset)) {
+                top = mMinOffset;
+                targetState = STATE_EXPANDED;
+            } else {
+                top = mMaxOffset;
+                targetState = STATE_COLLAPSED;
+            }
+        } else {
+            if (shouldCollapse(child, yvel)) {
+                top = mMaxOffset;
+                targetState = STATE_COLLAPSED;
+            } else {
+                top = mAnchorOffset;
+                targetState = STATE_ANCHORED;
+            }
+        }
+
+        out[0] = top;
+        out[1] = targetState;
+    }
+
     boolean shouldHide(View child, float yvel) {
         if (mSkipCollapsed) {
             return true;
@@ -750,11 +765,6 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
             }
         }
         return null;
-    }
-
-    private float getYVelocity() {
-        mVelocityTracker.computeCurrentVelocity(1000, mMaximumVelocity);
-        return VelocityTrackerCompat.getYVelocity(mVelocityTracker, mActivePointerId);
     }
 
     void startSettlingAnimation(View child, int state) {
@@ -810,37 +820,11 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
 
         @Override
         public void onViewReleased(View releasedChild, float xvel, float yvel) {
-            int top;
-            @AnchorBottomSheetBehavior.State int targetState;
-            if (yvel < 0) { // Moving up
-                if (shouldExpand(releasedChild, yvel)) {
-                    top = mMinOffset;
-                    targetState = STATE_EXPANDED;
-                } else {
-                    top = mAnchorOffset;
-                    targetState = STATE_ANCHORED;
-                }
-            } else if (mHideable && shouldHide(releasedChild, yvel)) {
-                top = mParentHeight;
-                targetState = STATE_HIDDEN;
-            } else if (yvel == 0.f) {
-                int currentTop = releasedChild.getTop();
-                if (Math.abs(currentTop - mMinOffset) < Math.abs(currentTop - mMaxOffset)) {
-                    top = mMinOffset;
-                    targetState = STATE_EXPANDED;
-                } else {
-                    top = mMaxOffset;
-                    targetState = STATE_COLLAPSED;
-                }
-            } else {
-                if (shouldCollapse(releasedChild, yvel)) {
-                    top = mMaxOffset;
-                    targetState = STATE_COLLAPSED;
-                } else {
-                    top = mAnchorOffset;
-                    targetState = STATE_ANCHORED;
-                }
-            }
+            int[] out = new int[2];
+            calculateTopAndTargetState(releasedChild, xvel, yvel, out);
+            int top = out[0];
+            @AnchorBottomSheetBehavior.State int targetState = out[1];
+
             if (mViewDragHelper.settleCapturedViewAt(releasedChild.getLeft(), top)) {
                 setStateInternal(STATE_SETTLING);
                 ViewCompat.postOnAnimation(releasedChild,
