@@ -678,7 +678,7 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
         int top;
         @AnchorBottomSheetBehavior.State int targetState;
 
-        if (yvel < 0 && Math.abs(yvel) > mMinimumVelocity) {
+        if (yvel < 0 && Math.abs(yvel) > mMinimumVelocity && Math.abs(yvel) > Math.abs(xvel)) {
             // scrolling up, i.e. expanding
             if (shouldExpand(child, yvel)) {
                 top = mMinOffset;
@@ -690,7 +690,7 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
         } else if (mHideable && shouldHide(child, yvel)) {
             top = mParentHeight;
             targetState = STATE_HIDDEN;
-        } else if (yvel > 0 && Math.abs(yvel) > mMinimumVelocity) {
+        } else if (yvel > 0 && Math.abs(yvel) > mMinimumVelocity && Math.abs(yvel) > Math.abs(xvel)) {
             // scrolling down, i.e. collapsing
             if (shouldCollapse(child, yvel)) {
                 top = mMaxOffset;
