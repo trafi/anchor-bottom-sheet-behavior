@@ -149,7 +149,7 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
 
     private static final float HIDE_FRICTION = 0.1f;
 
-    private static final float EXPAND_FRICTION = 0.3f;
+    private static final float EXPAND_FRICTION = 0.2f;
 
     private static final float COLLAPSE_FRICTION = 0.2f;
 
