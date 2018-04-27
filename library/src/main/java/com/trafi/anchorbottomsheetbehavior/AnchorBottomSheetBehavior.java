@@ -292,7 +292,7 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
         } else if (mState == STATE_DRAGGING || mState == STATE_SETTLING) {
             ViewCompat.offsetTopAndBottom(child, savedTop - child.getTop());
         } else if (mState == STATE_ANCHORED) {
-            ViewCompat.offsetTopAndBottom(child, mAnchorOffset);
+            ViewCompat.offsetTopAndBottom(child, Math.max(mMinOffset, mAnchorOffset));
         }
         if (mViewDragHelper == null) {
             mViewDragHelper = ViewDragHelper.create(parent, mDragCallback);
@@ -684,7 +684,7 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
                 top = mMinOffset;
                 targetState = STATE_EXPANDED;
             } else {
-                top = mAnchorOffset;
+                top = Math.max(mMinOffset, mAnchorOffset);
                 targetState = STATE_ANCHORED;
             }
         } else if (mHideable && shouldHide(child, yvel)) {
@@ -696,7 +696,7 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
                 top = mMaxOffset;
                 targetState = STATE_COLLAPSED;
             } else {
-                top = mAnchorOffset;
+                top = Math.max(mMinOffset, mAnchorOffset);
                 targetState = STATE_ANCHORED;
             }
         } else {
@@ -707,7 +707,7 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
                     top = mMinOffset;
                     targetState = STATE_EXPANDED;
                 } else {
-                    top = mAnchorOffset;
+                    top = Math.max(mMinOffset, mAnchorOffset);
                     targetState = STATE_ANCHORED;
                 }
             } else {
@@ -715,7 +715,7 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
                     top = mMaxOffset;
                     targetState = STATE_COLLAPSED;
                 } else {
-                    top = mAnchorOffset;
+                    top = Math.max(mMinOffset, mAnchorOffset);
                     targetState = STATE_ANCHORED;
                 }
             }
@@ -785,7 +785,7 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
         } else if (state == STATE_EXPANDED) {
             top = mMinOffset;
         } else if (state == STATE_ANCHORED) {
-            top = mAnchorOffset;
+            top = Math.max(mMinOffset, mAnchorOffset);
         } else if (mHideable && state == STATE_HIDDEN) {
             top = mParentHeight;
         } else {
