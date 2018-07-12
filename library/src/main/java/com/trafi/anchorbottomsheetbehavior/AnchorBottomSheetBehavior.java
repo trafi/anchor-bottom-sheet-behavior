@@ -200,6 +200,9 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
 
     boolean mTouchingScrollingChild;
 
+    private boolean mShouldAnchoredBeforeExpand = false;
+    private boolean mShouldAnchoredBeforeCollapse = false;
+
     /**
      * Default constructor for instantiating AnchorBottomSheetBehaviors.
      */
@@ -232,6 +235,9 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
         mAnchorOffset = (int) a.getDimension(R.styleable.AnchorBottomSheetBehavior_Layout_behavior_anchorOffset, 0);
         //noinspection WrongConstant
         mState = a.getInt(R.styleable.AnchorBottomSheetBehavior_Layout_behavior_defaultState, mState);
+
+        mShouldAnchoredBeforeExpand = a.getBoolean(R.styleable.AnchorBottomSheetBehavior_Layout_behavior_shouldAnchoredBeforeExpand, false);
+        mShouldAnchoredBeforeCollapse = a.getBoolean(R.styleable.AnchorBottomSheetBehavior_Layout_behavior_shouldAnchoredBeforeCollapse, false);
         a.recycle();
 
         ViewConfiguration configuration = ViewConfiguration.get(context);
@@ -741,7 +747,10 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
         int currentTop = child.getTop();
         if (currentTop < mAnchorOffset) {
             return true;
+        } else if (mShouldAnchoredBeforeExpand) {
+            return false;
         }
+
         final float newTop = currentTop + yvel * EXPAND_FRICTION;
         return newTop < mAnchorOffset;
     }
@@ -750,7 +759,10 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
         int currentTop = child.getTop();
         if (currentTop > mAnchorOffset) {
             return true;
+        } else if (mShouldAnchoredBeforeCollapse) {
+            return false;
         }
+
         final float newTop = currentTop + yvel * COLLAPSE_FRICTION;
         return newTop > mAnchorOffset;
     }
