@@ -175,6 +175,8 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
 
     private boolean mSkipCollapsed;
 
+    private boolean mDisableExpanded;
+
     @AnchorBottomSheetBehavior.State
     int mState = STATE_COLLAPSED;
 
@@ -282,6 +284,9 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
             peekHeight = mPeekHeight;
         }
         mMinOffset = Math.max(0, mParentHeight - child.getHeight());
+        if (mDisableExpanded) {
+            mMinOffset = mAnchorOffset;
+        }
         mMaxOffset = Math.max(mParentHeight - peekHeight, mMinOffset);
         if (mState == STATE_EXPANDED) {
             ViewCompat.offsetTopAndBottom(child, mMinOffset);
@@ -582,6 +587,14 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
      */
     public boolean getSkipCollapsed() {
         return mSkipCollapsed;
+    }
+
+    public boolean isDisableExpanded() {
+        return mDisableExpanded;
+    }
+
+    public void setDisableExpanded(boolean mDisableExpanded) {
+        this.mDisableExpanded = mDisableExpanded;
     }
 
     /**
