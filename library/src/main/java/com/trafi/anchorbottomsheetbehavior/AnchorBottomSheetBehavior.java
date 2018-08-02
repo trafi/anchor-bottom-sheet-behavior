@@ -530,6 +530,10 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
         if (mAnchorOffset != anchorOffset) {
             mAnchorOffset = anchorOffset;
 
+            if (mDisableExpanded) {
+                mMinOffset = mAnchorOffset;
+            }
+
             if (mState == STATE_ANCHORED) {
                 setStateInternal(STATE_SETTLING);
                 setState(STATE_ANCHORED);
