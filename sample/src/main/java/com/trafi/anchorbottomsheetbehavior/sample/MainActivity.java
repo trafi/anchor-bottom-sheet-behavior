@@ -4,9 +4,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-
-import com.trafi.anchorbottomsheetbehavior.AnchorBottomSheetBehavior;
-
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
