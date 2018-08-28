@@ -610,8 +610,8 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
         return mDisableCollapsed;
     }
 
-    public void setIsDisableCollapsed(boolean disableCollapsed) {
-        this.mDisableCollapsed = disableCollapsed;
+    public void setDisableCollapsed(boolean mDisableCollapsed) {
+        this.mDisableCollapsed = mDisableCollapsed;
     }
 
     public boolean isDisableExpanded() {
