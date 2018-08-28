@@ -65,12 +65,16 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
          * Called when the bottom sheet changes its state.
          *
          * @param bottomSheet The bottom sheet view.
+         * @param oldState    The old state. This will be one of {@link #STATE_DRAGGING},
+         *                    {@link #STATE_SETTLING}, {@link #STATE_EXPANDED},
+         *                    {@link #STATE_COLLAPSED}, {@link #STATE_ANCHORED} or
+         *                    {@link #STATE_HIDDEN}.
          * @param newState    The new state. This will be one of {@link #STATE_DRAGGING},
          *                    {@link #STATE_SETTLING}, {@link #STATE_EXPANDED},
          *                    {@link #STATE_COLLAPSED}, {@link #STATE_ANCHORED} or
          *                    {@link #STATE_HIDDEN}.
          */
-        public abstract void onStateChanged(@NonNull View bottomSheet, @State int newState);
+        public abstract void onStateChanged(@NonNull View bottomSheet, @State int oldState, @State int newState);
 
         /**
          * Called when the bottom sheet is being dragged.
@@ -90,7 +94,7 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
      */
     public abstract static class SimpleBottomSheetCallback extends BottomSheetCallback {
         @Override
-        public void onStateChanged(@NonNull View bottomSheet, @State int newState) {
+        public void onStateChanged(@NonNull View bottomSheet, @State int oldState, @State int newState) {
         }
 
         @Override
@@ -674,11 +678,12 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
         if (mState == state) {
             return;
         }
+        int oldState = mState;
         mState = state;
         View bottomSheet = mViewRef.get();
         if (bottomSheet != null) {
             for (int i = 0; i < mCallbacks.size(); i++) {
-                mCallbacks.get(i).onStateChanged(bottomSheet, state);
+                mCallbacks.get(i).onStateChanged(bottomSheet, oldState, state);
             }
         }
     }
