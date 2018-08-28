@@ -8,5 +8,8 @@
             <enum name="hidden" value="5" />
             <enum name="anchored" value="6" />
         </attr>
+
+        <attr name="behavior_shouldAnchoredBeforeExpand" format="boolean" />
+        <attr name="behavior_shouldAnchoredBeforeCollapse" format="boolean" />
     </declare-styleable>
 </resources>
