@@ -8,5 +8,6 @@
             <enum name="hidden" value="5" />
             <enum name="anchored" value="6" />
         </attr>
+        <attr name="behavior_skipAnchored" format="boolean" />
     </declare-styleable>
 </resources>

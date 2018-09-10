@@ -179,6 +179,8 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
 
     private boolean mSkipCollapsed;
 
+    private boolean mSkipAnchored;
+
     private boolean mDisableExpanded;
 
     @AnchorBottomSheetBehavior.State
@@ -232,6 +234,7 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
         setHideable(a.getBoolean(android.support.design.R.styleable.BottomSheetBehavior_Layout_behavior_hideable, false));
         setSkipCollapsed(a.getBoolean(android.support.design.R.styleable.BottomSheetBehavior_Layout_behavior_skipCollapsed,
                 false));
+        setSkipAnchored(a.getBoolean(R.styleable.AnchorBottomSheetBehavior_Layout_behavior_skipAnchored, false));
         a.recycle();
 
         a = context.obtainStyledAttributes(attrs, R.styleable.AnchorBottomSheetBehavior_Layout);
@@ -597,6 +600,28 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
         return mSkipCollapsed;
     }
 
+    /**
+     * Sets whether this bottom sheet should skip the anchored state when it is being collapsed from
+     * an expanded state or when it is being expanded from a collapsed state.
+     *
+     * @param skipAnchored True if the bottom sheet should skip the anchored state.
+     * @attr ref R.styleable#AnchorBottomSheetBehavior_Layout_behavior_skipAnchored
+     */
+    public void setSkipAnchored(boolean skipAnchored) {
+        mSkipAnchored = skipAnchored;
+    }
+
+    /**
+     * Sets whether this bottom sheet should skip the anchored state when it is being collapsed from
+     * an expanded state or when it is being expanded from a collapsed state.
+     *
+     * @return Whether the bottom sheet should skip the anchored state.
+     * @attr ref R.styleable#AnchorBottomSheetBehavior_Layout_behavior_skipAnchored
+     */
+    public boolean getSkipAnchored() {
+        return mSkipAnchored;
+    }
+
     public boolean isDisableExpanded() {
         return mDisableExpanded;
     }
@@ -760,6 +785,9 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
     }
 
     boolean shouldExpand(View child, float yvel) {
+        if (mSkipAnchored) {
+            return true;
+        }
         int currentTop = child.getTop();
         if (currentTop < mAnchorOffset) {
             return true;
@@ -769,6 +797,9 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
     }
 
     boolean shouldCollapse(View child, float yvel) {
+        if (mSkipAnchored) {
+            return true;
+        }
         int currentTop = child.getTop();
         if (currentTop > mAnchorOffset) {
             return true;
