@@ -754,22 +754,20 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
         } else {
             // not scrolling much, i.e. stationary
             int currentTop = child.getTop();
-            if (currentTop < mAnchorOffset) {
-                if (Math.abs(currentTop - mMinOffset) < Math.abs(currentTop - mAnchorOffset)) {
-                    top = mMinOffset;
-                    targetState = STATE_EXPANDED;
-                } else {
-                    top = Math.max(mMinOffset, mAnchorOffset);
-                    targetState = STATE_ANCHORED;
-                }
+            int distanceToExpanded = Math.abs(currentTop - mMinOffset);
+            int distanceToCollapsed = Math.abs(currentTop - mMaxOffset);
+            int distanceToAnchor = Math.abs(currentTop - mAnchorOffset);
+            if (mAnchorOffset > mMinOffset
+                    && distanceToAnchor < distanceToExpanded
+                    && distanceToAnchor < distanceToCollapsed) {
+                top = mAnchorOffset;
+                targetState = STATE_ANCHORED;
+            } else if (distanceToExpanded < distanceToCollapsed) {
+                top = mMinOffset;
+                targetState = STATE_EXPANDED;
             } else {
-                if (Math.abs(currentTop - mMaxOffset) < Math.abs(currentTop - mAnchorOffset)) {
-                    top = mMaxOffset;
-                    targetState = STATE_COLLAPSED;
-                } else {
-                    top = Math.max(mMinOffset, mAnchorOffset);
-                    targetState = STATE_ANCHORED;
-                }
+                top = mMaxOffset;
+                targetState = STATE_COLLAPSED;
             }
         }
 
