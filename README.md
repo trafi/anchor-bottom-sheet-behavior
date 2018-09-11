@@ -46,7 +46,7 @@ allprojects {
 // module build.gradle
 dependencies {
     // ..
-    implementation 'com.trafi:anchor-bottom-sheet-behavior:0.12-alpha'
+    implementation 'com.trafi:anchor-bottom-sheet-behavior:0.13-alpha'
 }
 ```
 
@@ -76,11 +76,11 @@ behavior.addBottomSheetCallback(object : AnchorBottomSheetBehavior.BottomSheetCa
         // offset == 1f when bottom sheet is expanded
     }
     
-    override fun onStateChanged(view: View, state: Int) {
-        when (state) {
-            AnchorBottomSheetBehavior.STATE_COLLAPSED -> TODO()
-            AnchorBottomSheetBehavior.STATE_ANCHORED -> TODO()
-            AnchorBottomSheetBehavior.STATE_EXPANDED -> TODO()
+    override fun onStateChanged(view: View, oldState: Int, newState: Int) {
+        when (newState) {
+            STATE_COLLAPSED -> TODO()
+            STATE_ANCHORED -> TODO()
+            STATE_EXPANDED -> TODO()
         }
     }
 })
