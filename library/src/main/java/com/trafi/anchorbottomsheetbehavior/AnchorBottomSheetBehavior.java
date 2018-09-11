@@ -304,7 +304,12 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
         } else if (mState == STATE_DRAGGING || mState == STATE_SETTLING) {
             ViewCompat.offsetTopAndBottom(child, savedTop - child.getTop());
         } else if (mState == STATE_ANCHORED) {
-            ViewCompat.offsetTopAndBottom(child, mAnchorOffset);
+            if (mAnchorOffset > mMinOffset) {
+                ViewCompat.offsetTopAndBottom(child, mAnchorOffset);
+            } else {
+                mState = STATE_EXPANDED;
+                ViewCompat.offsetTopAndBottom(child, mMinOffset);
+            }
         }
         if (mViewDragHelper == null) {
             mViewDragHelper = ViewDragHelper.create(parent, mDragCallback);
@@ -749,22 +754,20 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
         } else {
             // not scrolling much, i.e. stationary
             int currentTop = child.getTop();
-            if (currentTop < mAnchorOffset) {
-                if (Math.abs(currentTop - mMinOffset) < Math.abs(currentTop - mAnchorOffset)) {
-                    top = mMinOffset;
-                    targetState = STATE_EXPANDED;
-                } else {
-                    top = mAnchorOffset;
-                    targetState = STATE_ANCHORED;
-                }
+            int distanceToExpanded = Math.abs(currentTop - mMinOffset);
+            int distanceToCollapsed = Math.abs(currentTop - mMaxOffset);
+            int distanceToAnchor = Math.abs(currentTop - mAnchorOffset);
+            if (mAnchorOffset > mMinOffset
+                    && distanceToAnchor < distanceToExpanded
+                    && distanceToAnchor < distanceToCollapsed) {
+                top = mAnchorOffset;
+                targetState = STATE_ANCHORED;
+            } else if (distanceToExpanded < distanceToCollapsed) {
+                top = mMinOffset;
+                targetState = STATE_EXPANDED;
             } else {
-                if (Math.abs(currentTop - mMaxOffset) < Math.abs(currentTop - mAnchorOffset)) {
-                    top = mMaxOffset;
-                    targetState = STATE_COLLAPSED;
-                } else {
-                    top = mAnchorOffset;
-                    targetState = STATE_ANCHORED;
-                }
+                top = mMaxOffset;
+                targetState = STATE_COLLAPSED;
             }
         }
 
@@ -785,7 +788,7 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
     }
 
     boolean shouldExpand(View child, float yvel) {
-        if (mSkipAnchored) {
+        if (mSkipAnchored || mMinOffset >= mAnchorOffset) {
             return true;
         }
         int currentTop = child.getTop();
@@ -797,7 +800,7 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
     }
 
     boolean shouldCollapse(View child, float yvel) {
-        if (mSkipAnchored) {
+        if (mSkipAnchored || mMinOffset >= mAnchorOffset) {
             return true;
         }
         int currentTop = child.getTop();
@@ -838,7 +841,12 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
         } else if (state == STATE_EXPANDED) {
             top = mMinOffset;
         } else if (state == STATE_ANCHORED) {
-            top = mAnchorOffset;
+            if (mAnchorOffset > mMinOffset) {
+                top = mAnchorOffset;
+            } else {
+                state = STATE_EXPANDED;
+                top = mMinOffset;
+            }
         } else if (mHideable && state == STATE_HIDDEN) {
             top = mParentHeight;
         } else {
