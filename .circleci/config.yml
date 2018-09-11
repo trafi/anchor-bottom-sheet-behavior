@@ -29,6 +29,9 @@ jobs:
       - store_artifacts:
           path: sample/build/reports
           destination: sample-reports
+      - store_artifacts:
+          path: sample/build/outputs/apk/release
+          destination: sample-apk
       - store_test_results:
           path: library/build/test-results
       - store_test_results:
