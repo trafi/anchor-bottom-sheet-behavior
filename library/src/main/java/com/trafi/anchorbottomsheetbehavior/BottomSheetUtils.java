@@ -15,8 +15,8 @@
  */
 package com.trafi.anchorbottomsheetbehavior;
 
-import android.support.design.widget.CoordinatorLayout;
-import android.support.v4.view.ViewPager;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.viewpager.widget.ViewPager;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;

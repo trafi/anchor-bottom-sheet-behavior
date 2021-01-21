@@ -16,5 +16,6 @@ android {
 }
 
 dependencies {
-    implementation "com.android.support:design:$supportLibVersion"
+    implementation 'com.google.android.material:material:1.2.1'
+    implementation 'androidx.viewpager2:viewpager2:1.0.0'
 }
