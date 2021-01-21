@@ -19,20 +19,6 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Parcel;
 import android.os.Parcelable;
-import androidx.annotation.IntDef;
-import androidx.annotation.NonNull;
-import androidx.annotation.RestrictTo;
-import androidx.annotation.VisibleForTesting;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.core.os.ParcelableCompat;
-import androidx.core.os.ParcelableCompatCreatorCallbacks;
-import androidx.customview.view.AbsSavedState;
-import androidx.core.view.MotionEventCompat;
-import androidx.core.view.NestedScrollingChild;
-import androidx.core.view.ViewCompat;
-import androidx.viewpager.widget.ViewPager;
-import androidx.viewpager.widget.ViewPagerUtils;
-import androidx.customview.widget.ViewDragHelper;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.MotionEvent;
@@ -47,6 +33,23 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.IntDef;
+import androidx.annotation.NonNull;
+import androidx.annotation.RestrictTo;
+import androidx.annotation.VisibleForTesting;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.os.ParcelableCompat;
+import androidx.core.os.ParcelableCompatCreatorCallbacks;
+import androidx.core.view.MotionEventCompat;
+import androidx.core.view.NestedScrollingChild;
+import androidx.core.view.ViewCompat;
+import androidx.customview.view.AbsSavedState;
+import androidx.customview.widget.ViewDragHelper;
+import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager.widget.ViewPagerUtils;
+import androidx.viewpager2.widget.ViewPager2;
+import androidx.viewpager2.widget.ViewPager2Utils;
 
 import static androidx.annotation.RestrictTo.Scope.GROUP_ID;
 
@@ -815,7 +818,14 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
         if (view instanceof NestedScrollingChild) {
             return view;
         }
-        if (view instanceof ViewPager) {
+        if (view instanceof ViewPager2) {
+            ViewPager2 viewPager = (ViewPager2) view;
+            View currentViewPagerChild = ViewPager2Utils.getCurrentView(viewPager);
+            View scrollingChild = findScrollingChild(currentViewPagerChild);
+            if (scrollingChild != null) {
+                return scrollingChild;
+            }
+        } else if (view instanceof ViewPager) {
             ViewPager viewPager = (ViewPager) view;
             View currentViewPagerChild = ViewPagerUtils.getCurrentView(viewPager);
             View scrollingChild = findScrollingChild(currentViewPagerChild);
