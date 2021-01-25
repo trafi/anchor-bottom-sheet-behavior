@@ -15,8 +15,10 @@
  */
 package com.trafi.anchorbottomsheetbehavior;
 
-import android.support.design.widget.CoordinatorLayout;
-import android.support.v4.view.ViewPager;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager2.widget.ViewPager2;
+
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
@@ -27,6 +29,33 @@ public class BottomSheetUtils {
         final View bottomSheetView = findBottomSheetView(pager);
         if (bottomSheetView != null) {
             pager.addOnPageChangeListener(new BottomSheetViewPagerListener(pager, bottomSheetView));
+        }
+    }
+
+    public static void setupViewPager2(ViewPager2 pager) {
+        final View bottomSheetView = findBottomSheetView(pager);
+        if (bottomSheetView != null) {
+            pager.registerOnPageChangeCallback(new BottomSheetViewPager2Listener(pager, bottomSheetView));
+        }
+    }
+
+    private static class BottomSheetViewPager2Listener extends ViewPager2.OnPageChangeCallback {
+        private final View pager;
+        private final AnchorBottomSheetBehavior behavior;
+
+        private BottomSheetViewPager2Listener(ViewPager2 pager, View bottomSheetView) {
+            this.pager = pager;
+            this.behavior = AnchorBottomSheetBehavior.from(bottomSheetView);
+        }
+
+        @Override
+        public void onPageSelected(int position) {
+            pager.post(new Runnable() {
+                @Override
+                public void run() {
+                    behavior.invalidateScrollingChild();
+                }
+            });
         }
     }
 

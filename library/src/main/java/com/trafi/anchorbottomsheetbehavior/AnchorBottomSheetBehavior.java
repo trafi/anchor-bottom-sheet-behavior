@@ -19,20 +19,6 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.IntDef;
-import android.support.annotation.NonNull;
-import android.support.annotation.RestrictTo;
-import android.support.annotation.VisibleForTesting;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.v4.os.ParcelableCompat;
-import android.support.v4.os.ParcelableCompatCreatorCallbacks;
-import android.support.v4.view.AbsSavedState;
-import android.support.v4.view.MotionEventCompat;
-import android.support.v4.view.NestedScrollingChild;
-import android.support.v4.view.ViewCompat;
-import android.support.v4.view.ViewPager;
-import android.support.v4.view.ViewPagerUtils;
-import android.support.v4.widget.ViewDragHelper;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.MotionEvent;
@@ -48,7 +34,24 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.support.annotation.RestrictTo.Scope.GROUP_ID;
+import androidx.annotation.IntDef;
+import androidx.annotation.NonNull;
+import androidx.annotation.RestrictTo;
+import androidx.annotation.VisibleForTesting;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.os.ParcelableCompat;
+import androidx.core.os.ParcelableCompatCreatorCallbacks;
+import androidx.core.view.MotionEventCompat;
+import androidx.core.view.NestedScrollingChild;
+import androidx.core.view.ViewCompat;
+import androidx.customview.view.AbsSavedState;
+import androidx.customview.widget.ViewDragHelper;
+import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager.widget.ViewPagerUtils;
+import androidx.viewpager2.widget.ViewPager2;
+import androidx.viewpager2.widget.ViewPager2Utils;
+
+import static androidx.annotation.RestrictTo.Scope.GROUP_ID;
 
 /**
  * An interaction behavior plugin for a child view of {@link CoordinatorLayout} to make it work as
@@ -223,16 +226,16 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
     public AnchorBottomSheetBehavior(Context context, AttributeSet attrs) {
         super(context, attrs);
         TypedArray a = context.obtainStyledAttributes(attrs,
-                android.support.design.R.styleable.BottomSheetBehavior_Layout);
-        TypedValue value = a.peekValue(android.support.design.R.styleable.BottomSheetBehavior_Layout_behavior_peekHeight);
+                com.google.android.material.R.styleable.BottomSheetBehavior_Layout);
+        TypedValue value = a.peekValue(com.google.android.material.R.styleable.BottomSheetBehavior_Layout_behavior_peekHeight);
         if (value != null && value.data == PEEK_HEIGHT_AUTO) {
             setPeekHeight(value.data);
         } else {
             setPeekHeight(a.getDimensionPixelSize(
-                    android.support.design.R.styleable.BottomSheetBehavior_Layout_behavior_peekHeight, PEEK_HEIGHT_AUTO));
+                    com.google.android.material.R.styleable.BottomSheetBehavior_Layout_behavior_peekHeight, PEEK_HEIGHT_AUTO));
         }
-        setHideable(a.getBoolean(android.support.design.R.styleable.BottomSheetBehavior_Layout_behavior_hideable, false));
-        setSkipCollapsed(a.getBoolean(android.support.design.R.styleable.BottomSheetBehavior_Layout_behavior_skipCollapsed,
+        setHideable(a.getBoolean(com.google.android.material.R.styleable.BottomSheetBehavior_Layout_behavior_hideable, false));
+        setSkipCollapsed(a.getBoolean(com.google.android.material.R.styleable.BottomSheetBehavior_Layout_behavior_skipCollapsed,
                 false));
         setSkipAnchored(a.getBoolean(R.styleable.AnchorBottomSheetBehavior_Layout_behavior_skipAnchored, false));
         a.recycle();
@@ -284,7 +287,7 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
         if (mPeekHeightAuto) {
             if (mPeekHeightMin == 0) {
                 mPeekHeightMin = parent.getResources().getDimensionPixelSize(
-                        android.support.design.R.dimen.design_bottom_sheet_peek_height_min);
+                        com.google.android.material.R.dimen.design_bottom_sheet_peek_height_min);
             }
             peekHeight = Math.max(mPeekHeightMin, mParentHeight - parent.getWidth() * 9 / 16);
         } else {
@@ -815,7 +818,14 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
         if (view instanceof NestedScrollingChild) {
             return view;
         }
-        if (view instanceof ViewPager) {
+        if (view instanceof ViewPager2) {
+            ViewPager2 viewPager = (ViewPager2) view;
+            View currentViewPagerChild = ViewPager2Utils.getCurrentView(viewPager);
+            View scrollingChild = findScrollingChild(currentViewPagerChild);
+            if (scrollingChild != null) {
+                return scrollingChild;
+            }
+        } else if (view instanceof ViewPager) {
             ViewPager viewPager = (ViewPager) view;
             View currentViewPagerChild = ViewPagerUtils.getCurrentView(viewPager);
             View scrollingChild = findScrollingChild(currentViewPagerChild);
